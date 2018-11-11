@@ -48,7 +48,11 @@
                                                 <action selector="shareMeme:" destination="BYZ-38-t0r" id="Z3H-iV-WMl"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Cancel" id="LJW-Lj-b2i"/>
+                                        <barButtonItem key="rightBarButtonItem" title="Cancel" id="LJW-Lj-b2i">
+                                            <connections>
+                                                <action selector="cancelButtonAction:" destination="BYZ-38-t0r" id="klU-bY-Vxe"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>

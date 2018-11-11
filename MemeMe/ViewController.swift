@@ -29,8 +29,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        shareButton.isEnabled = false
         let memeTextAttributes:[String: Any] = [
             NSAttributedStringKey.strokeColor.rawValue: UIColor.black,
             NSAttributedStringKey.foregroundColor.rawValue: UIColor.white,
@@ -38,10 +36,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             NSAttributedStringKey.strokeWidth.rawValue: -3.5]
         topTextField.defaultTextAttributes = memeTextAttributes
         bottomTextField.defaultTextAttributes = memeTextAttributes
-        topTextField.text = "TOP TEXT"
-        bottomTextField.text = "BOTTOM TEXT"
         topTextField.delegate = self
         bottomTextField.delegate = self
+        refreshView()
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -114,6 +111,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let activityViewController = UIActivityViewController(activityItems: [meme.finalImage], applicationActivities: [])
         present(activityViewController, animated: true, completion: nil)
         shareButton.isEnabled = true
+    }
+    
+    @IBAction func cancelButtonAction(_ sender: Any) {
+        refreshView()
+    }
+    
+    func refreshView() {
+        topTextField.text = "TOP TEXT"
+        bottomTextField.text = "BOTTOM TEXT"
+        imageView.image = nil
+        shareButton.isEnabled = false
     }
     
     /* MARK: - Get the image and show it to the imageview */
