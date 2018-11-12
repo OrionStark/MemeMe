@@ -8,14 +8,6 @@
 
 import UIKit
 
-/* MARK: - Struct for creating a meme */
-struct Meme {
-    var topText: String!
-    var bottomText: String!
-    var originalImage: UIImage!
-    var finalImage: UIImage!
-}
-
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var imageView: UIImageView!
@@ -29,15 +21,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let memeTextAttributes:[String: Any] = [
-            NSAttributedStringKey.strokeColor.rawValue: UIColor.black,
-            NSAttributedStringKey.foregroundColor.rawValue: UIColor.white,
-            NSAttributedStringKey.font.rawValue: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSAttributedStringKey.strokeWidth.rawValue: -3.5]
-        topTextField.defaultTextAttributes = memeTextAttributes
-        bottomTextField.defaultTextAttributes = memeTextAttributes
-        topTextField.delegate = self
-        bottomTextField.delegate = self
+        setUpTextField(topTextField)
+        setUpTextField(bottomTextField)
         refreshView()
     }
     
@@ -103,14 +88,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBAction func shareMeme(_ sender: Any) {
         shareButton.isEnabled = false
-        
+    
         // Create the meme
         let _memeImage = generateMemeImage()
-        let meme = Meme(topText: topTextField.text, bottomText: bottomTextField.text, originalImage: imageView.image, finalImage: _memeImage)
-        
-        let activityViewController = UIActivityViewController(activityItems: [meme.finalImage], applicationActivities: [])
+        let activityViewController = UIActivityViewController(activityItems: [_memeImage], applicationActivities: [])
+        activityViewController.completionWithItemsHandler = {
+            (activity, completed, items, error) in
+            if ( completed ) {
+                self.save(_memeImage)
+            }
+        }
         present(activityViewController, animated: true, completion: nil)
         shareButton.isEnabled = true
+    }
+    
+    /* MARK: After meme succesfully saved, this method will be called */
+    func save(_ memedImage: UIImage) {
+        _ = Meme(topText: topTextField.text, bottomText: bottomTextField.text, originalImage: imageView.image, finalImage: memedImage)
+        let alert = UIAlertController(title: "Save Completed", message: "Your meme has been saved", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {
+            action in
+            self.refreshView()
+        }))
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func cancelButtonAction(_ sender: Any) {
@@ -122,6 +122,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         bottomTextField.text = "BOTTOM TEXT"
         imageView.image = nil
         shareButton.isEnabled = false
+    }
+    
+    /* MARK: Setup text atributes to the textfield */
+    func setUpTextField(_ textField: UITextField) {
+        let memeTextAttributes:[String: Any] = [
+            NSAttributedStringKey.strokeColor.rawValue: UIColor.black,
+            NSAttributedStringKey.foregroundColor.rawValue: UIColor.white,
+            NSAttributedStringKey.font.rawValue: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
+            NSAttributedStringKey.strokeWidth.rawValue: -3.5]
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.delegate = self
     }
     
     /* MARK: - Get the image and show it to the imageview */
