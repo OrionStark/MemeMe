@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CreateMemeViewController
 //  MemeMe
 //
 //  Created by Robby Muhammad Nst on 14/10/18.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var navbar: UINavigationBar!
@@ -104,17 +104,27 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     /* MARK: After meme succesfully saved, this method will be called */
     func save(_ memedImage: UIImage) {
-        _ = Meme(topText: topTextField.text, bottomText: bottomTextField.text, originalImage: imageView.image, finalImage: memedImage)
+        
+        /* Save meme to the shared data */
+        let meme = Meme(topText: topTextField.text, bottomText: bottomTextField.text, originalImage: imageView.image, finalImage: memedImage)
+        let object = UIApplication.shared.delegate
+        let appDelegate = object as! AppDelegate
+        appDelegate.memes.append(meme)
+        
+        /* After meme saved, show the alert for succeed saving the meme. */
         let alert = UIAlertController(title: "Save Completed", message: "Your meme has been saved", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {
             action in
             self.refreshView()
+            self.dismiss(animated: true, completion: nil)
         }))
         present(alert, animated: true, completion: nil)
+        
     }
     
     @IBAction func cancelButtonAction(_ sender: Any) {
         refreshView()
+        dismiss(animated: true, completion: nil)
     }
     
     func refreshView() {
